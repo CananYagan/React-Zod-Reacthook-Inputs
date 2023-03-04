@@ -3,11 +3,9 @@ import InputGroup from 'react-bootstrap/InputGroup';
 
 function FormEx() {
   return (
-    <div>
-      <h3 className='text-dark'>
-        User Login
-      </h3>
-    </div>
+        <InputGroup size="lg" className="col-md-12 mx-auto">
+          <InputGroup.Text id="inputGroup-sizing-lg1">User Login Screen</InputGroup.Text>
+        </InputGroup>
   );
 }
 

@@ -2,37 +2,43 @@ import { useForm ,useWatch} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
+import {Button,Form,InputGroup,Container,Row,Col} from "react-bootstrap";
 import { DevTool } from "@hookform/devtools";
+import FormEx from "./Components/FormEx";
 
 const schema = z.object({
-  name: z.string().min(1, { message: "İsim boş bırakılamaz" }),
-  password: z
-    .number({
-      invalid_type_error: "Boş bırakılamaz",
-    })
-    .min(5, { message: "Yaş 10 dan küçük olamaz" }),
+  name: z.string().min(1, { message: "Bu alan boş bırakılamaz." }),
+  // password: z
+  //   .number({
+  //     invalid_type_error: "Boş bırakılamaz.",
+  //   })
+  //   .min(5, { message: "Yaş 10 dan küçük olamaz" }),
+
+  password:z.number({
+       invalid_type_error: "Şifre sadece sayı olmalıdır.",
+      })
+       .min(5, { message: "Yaş 10 dan küçük olamaz" }).or(z.string().regex(/^\d+$/).transform(Number)),
 
   date: z.string({
-    required_error: "Please select a date and time",
+    required_error: "Lütfen tarh seçiniz",
     invalid_type_error: "Bu bir tarih değil!",
   }),
 
   isActive: z.literal(true, {
-      errorMap: () => ({ message: "Lüfen Kutucuğu işaretleyiniz." }),
-    }),
-  email: z
-    .string()
-    .min(1, { message: "This field has to be filled." })
-    .email("Bu bir email değil.")
-
+      errorMap: () => ({ message: "Lütfen kutucuğu işaretleyiniz." }),
+    })
 });
+
+const email= z
+  .string()
+  .min(1, { message: "Bu alan boş bırakılamaz." })
+  .email("Bu bir email değil.")
+
 
 const onSubmit = (data) => {
   alert(JSON.stringify(data));
 };
+
 
  function App() {
   const {
@@ -42,23 +48,22 @@ const onSubmit = (data) => {
     control,
     formState: { errors },
   } = useForm({
-    // defaultValues:{
-    //   name:"Canan",
-    //   date:new Date(),
-    //   password:1234,
-    //   isActive:true
-    // },
-    resolver: zodResolver(schema),
+
+    resolver: zodResolver(schema)
   });
-   console.log(errors)
+ 
+   //console.log(data)
   return (
     <>
+    <Container >
       <Form
         onSubmit={handleSubmit((onSubmit))}
       >
+       
+        <Row  className="col-md-12 mx-auto">
         <InputGroup size="lg" className="mb-3">
           <InputGroup.Text id="inputGroup-sizing-lg">
-            Enter Name
+            Name Surname
           </InputGroup.Text>
           <Form.Control
             aria-label="Large"
@@ -67,7 +72,7 @@ const onSubmit = (data) => {
           />
         </InputGroup>
         {errors.name?.message && <p>{errors.name?.message}</p>}
-
+        
         <InputGroup size="lg" className="mb-3">
           <InputGroup.Text id="inputGroup-sizing-lg1">Password</InputGroup.Text>
           <Form.Control
@@ -90,18 +95,18 @@ const onSubmit = (data) => {
         </InputGroup>
         {errors.date?.message && <p>{errors.date?.message}</p>}
 
-        <InputGroup size="lg" className="mb-3">
-          <InputGroup.Text id="inputGroup-sizing-lg2">Email</InputGroup.Text>
+        {watch("isActive")===true ? (<InputGroup size="lg" className="mb-3"  id={email}>
+          <InputGroup.Text >Email</InputGroup.Text>
           <Form.Control
             type="text"
             aria-label="Large"
             aria-describedby="inputGroup-sizing-sm"
             {...register("email")}
           />
-        </InputGroup>
-        {errors.email?.message && <p>{errors.email?.message}</p>}
+        </InputGroup>):(" ")}
+        {errors.email?.message && <p>{errors.email?.message}</p>} 
 
-        <InputGroup size="lg" className="mb-3" >
+        <InputGroup size="lg" className="mb-3" id="isActive " >
         <Form.Check
           required
           label="Agree to terms and conditions"
@@ -111,15 +116,15 @@ const onSubmit = (data) => {
         />
         </InputGroup>
         {errors.isActive?.message && <p>{errors.isActive?.message}</p>}
+         
 
-
-
-
-        <Button variant="primary" type="submit" >
+        <Button className="mb-3"variant="primary" type="submit" >
           Submit
         </Button>
+        </Row>
       </Form>
       <DevTool control={control} /> {/* set up the dev tool */}
+      </Container>
     </>
   );
 }
