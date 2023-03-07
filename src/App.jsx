@@ -2,7 +2,7 @@ import { useForm ,useWatch} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {Button,Form,InputGroup,Container,Row,Col} from "react-bootstrap";
+import {Button,Form,InputGroup,Container,Row} from "react-bootstrap";
 import { DevTool } from "@hookform/devtools";
 import FormEx from "./Components/FormEx";
 
@@ -26,13 +26,14 @@ const schema = z.object({
 
   isActive: z.literal(true, {
       errorMap: () => ({ message: "Lütfen kutucuğu işaretleyiniz." }),
-    })
-});
-
-const email= z
+  }),
+  email: z
   .string()
   .min(1, { message: "Bu alan boş bırakılamaz." })
   .email("Bu bir email değil.")
+});
+
+
 
 
 const onSubmit = (data) => {
@@ -52,9 +53,17 @@ const onSubmit = (data) => {
     resolver: zodResolver(schema)
   });
  
-   //console.log(data)
+ const isActiveWatch=watch("isActive")
+
   return (
     <>
+<div class="page-header">
+  <h1 className="col-md-8 mx-auto text-danger">USER LOGIN PROCESS</h1>
+</div>
+<br />
+<br />
+
+
     <Container >
       <Form
         onSubmit={handleSubmit((onSubmit))}
@@ -95,7 +104,7 @@ const onSubmit = (data) => {
         </InputGroup>
         {errors.date?.message && <p>{errors.date?.message}</p>}
 
-        {watch("isActive")===true ? (<InputGroup size="lg" className="mb-3"  id={email}>
+        {isActiveWatch && (<InputGroup size="lg" className="mb-3">
           <InputGroup.Text >Email</InputGroup.Text>
           <Form.Control
             type="text"
@@ -103,7 +112,7 @@ const onSubmit = (data) => {
             aria-describedby="inputGroup-sizing-sm"
             {...register("email")}
           />
-        </InputGroup>):(" ")}
+        </InputGroup>)}
         {errors.email?.message && <p>{errors.email?.message}</p>} 
 
         <InputGroup size="lg" className="mb-3" id="isActive " >
